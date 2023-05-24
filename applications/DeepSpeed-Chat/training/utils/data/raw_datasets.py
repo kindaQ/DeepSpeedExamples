@@ -411,7 +411,9 @@ class CohereMiraclzhqueries2212Dataset(PromptRawDataset):
         return self.raw_datasets["train"]
 
     def get_eval_data(self):
-        return self.raw_datasets["dev"]
+        if "dev" in self.raw_datasets:
+            return self.raw_datasets["dev"]
+        return self.raw_datasets["validation"]
 
     def get_prompt(self, sample):
         return " Human: " + sample['query'] + " Assistant:"
@@ -427,8 +429,11 @@ class CohereMiraclzhqueries2212Dataset(PromptRawDataset):
             'positive_passages'][0]['text']
 
     def get_prompt_and_rejected(self, sample):
-        return " Human: " + sample['query'] + " Assistant: " + sample[
-            'negative_passages'][0]['text']
+        if 'negative_passages' in sample and len(sample['negative_passages']) > 0:
+            neg = sample['negative_passages'][0]['text']
+        else:
+            neg = "不知道"
+        return " Human: " + sample['query'] + " Assistant: " + neg
 
 
 # Chinese dataset
